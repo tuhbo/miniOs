@@ -27,4 +27,7 @@ build : $(MBR) $(LOADER)
 
 install : hd1 hd2
 
+clean:
+	@rm -rf $(BUILD_DIR)
+
 all : mk_dir build

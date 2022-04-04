@@ -1,4 +1,3 @@
-;���������� 
 ;------------------------------------------------------------
 %include "boot.inc"
 SECTION MBR vstart=0x7c00         
@@ -53,7 +52,7 @@ SECTION MBR vstart=0x7c00
    mov cx,4			 
    call rd_disk_m_16		 
   
-   jmp LOADER_BASE_ADDR
+   jmp LOADER_BASE_ADDR + 0x300
        
 ;-------------------------------------------------------------------------------
 ;功能:读取硬盘n个扇区
@@ -111,7 +110,7 @@ rd_disk_m_16:
       mov dx, 256
       mul dx
       mov cx, ax	   
-      
+
       mov dx, 0x1f0
   .go_on_read:
       in ax,dx
