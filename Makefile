@@ -8,13 +8,15 @@ MBR = $(BUILD_DIR)/mbr.bin
 LOADER = $(BUILD_DIR)/loader.bin
 KERNEL = $(BUILD_DIR)/kernel.bin
 
-LIB = -I boot/include/
+LIB = -I boot/include/ -I lib/ -I lib/kernel/ -I lib/user/
 
 CFLAGS = -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes
 
 LDFLAGS = -Ttext $(ENTRY_POINT) -e main
 
-OBJS = $(BUILD_DIR)/main.o
+ASFLAGS = -f elf
+
+OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/print.o
 
 ##### c代码编译  ##########
 $(BUILD_DIR)/main.o: kernel/main.c
@@ -26,6 +28,9 @@ $(MBR) : boot/mbr.S
 
 $(LOADER) : boot/loader.S
 	$(AS) $(LIB) -o $@ $^
+
+$(BUILD_DIR)/print.o: lib/kernel/print.S
+	$(AS) $(ASFLAGS) -o $@ $^
 
 ##### 链接所有目标文件 #########
 $(BUILD_DIR)/kernel.bin: $(OBJS)
