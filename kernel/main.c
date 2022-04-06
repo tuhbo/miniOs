@@ -1,7 +1,10 @@
 #include "print.h"
+#include "init.h"
+
 int main(void) {
     put_str("hello world\n");
-    put_int(123);
+    init_all();
+    asm volatile("sti");
     while (1);
     return 0;
 }
