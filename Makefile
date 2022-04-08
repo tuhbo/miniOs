@@ -8,7 +8,7 @@ MBR = $(BUILD_DIR)/mbr.bin
 LOADER = $(BUILD_DIR)/loader.bin
 KERNEL = $(BUILD_DIR)/kernel.bin
 
-LIB = -I boot/include/ -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/
+LIB = -I boot/include/ -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/
 
 CFLAGS = -Wall $(LIB) -c -fno-builtin -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes
 
@@ -17,7 +17,9 @@ LDFLAGS = -Ttext $(ENTRY_POINT) -e main
 ASFLAGS = -f elf
 
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
-	   $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o 
+	   $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/timer.o \
+	   $(BUILD_DIR)/debug.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/string.o \
+	   $(BUILD_DIR)/memory.o
 
 ##### c代码编译  ##########
 $(BUILD_DIR)/main.o: kernel/main.c
@@ -27,6 +29,21 @@ $(BUILD_DIR)/init.o: kernel/init.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILD_DIR)/interrupt.o: kernel/interrupt.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/timer.o: device/timer.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/debug.o: kernel/debug.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/string.o: lib/string.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/bitmap.o: lib/kernel/bitmap.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/memory.o: kernel/memory.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 ##### 汇编代码编译 ######
