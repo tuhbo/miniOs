@@ -9,7 +9,7 @@ void bitmap_init(struct bitmap *btmp) {
 }
 
 // 判断bit_idx位是否为1
-bool bitmap_sacn_test(struct bitmap *btmp, uint32_t bit_idx) {
+bool bitmap_scan_test(struct bitmap *btmp, uint32_t bit_idx) {
     uint32_t byte_idx = bit_idx / 8;
     uint32_t bit_odd = bit_idx % 8;
     return (btmp->bits[byte_idx] & (BITMAP_MASK << bit_odd));
@@ -40,7 +40,7 @@ int bitmap_scan(struct bitmap *btmp, uint32_t cnt) {
 
     bit_idx_start = -1;
     while (bit_left-- > 0) {
-        if (!bitmap_scan(btmp, next_bit)) {
+        if (!bitmap_scan_test(btmp, next_bit)) {
             count++;
         } else {
             count = 0;
