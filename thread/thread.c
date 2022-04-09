@@ -2,11 +2,29 @@
 #include "stdint.h"
 #include "string.h"
 #include "global.h"
+#include "debug.h"
+#include "interrupt.h"
+#include "print.h"
 #include "memory.h"
 
 #define PG_SIZE 4096
 
+struct task_struct *main_thread;    // 主线程PCB
+struct list thread_ready_list;  // 就绪队列
+struct list thread_all_list;    // 所有任务队列
+static struct list_elem *thread_tag;
+
+extern void switch_to(struct task_struct *cur, struct task_struct *next);
+
+// 获取当前线程PCB指针
+struct task_struct *running_thread() {
+    uint32_t esp;
+    asm ("mov %%esp, %0" : "=g" (esp));
+    return (struct task_struct *)(esp & 0xfffff000);
+}
+
 static void kernel_thread(thread_func *function, void *func_arg) {
+    intr_enable();
     function(func_arg);
 }
 
@@ -27,11 +45,19 @@ void thread_create(struct task_struct *pthread, thread_func function, void *func
 void init_thread(struct task_struct *pthread, char *name, int prio) {
     memset(pthread, 0, sizeof(*pthread));
     strcpy(pthread->name, name);
-    pthread->status = TASK_RUNNING;
-    pthread->priority = prio;
 
+    if (pthread == main_thread) {
+        pthread->status = TASK_RUNNING;
+    } else {
+        pthread->status = TASK_READY;
+    }
     // self_kstack是线程自己在内核态下使用的栈顶地址
     pthread->self_kstack = (uint32_t *)((uint32_t)pthread + PG_SIZE);
+    pthread->priority = prio;
+    pthread->ticks = prio;
+    pthread->elapsed_ticks = 0;
+    pthread->pgdir = NULL;
+
     pthread->stack_magic = 0x20000924;
 }
 
@@ -41,6 +67,50 @@ struct task_struct *thread_start(char *name, int prio, thread_func function, voi
     init_thread(thread, name, prio);
     thread_create(thread, function, func_arg);
 
-    asm volatile ("movl %0, %%esp; pop %%ebp; pop %%ebx; pop %%edi; pop %%esi; ret" : : "g" (thread->self_kstack) : "memory");
+    ASSERT(!elem_find(&thread_ready_list, &thread->general_tag));
+    list_append(&thread_ready_list, &thread->general_tag);
+
+    ASSERT(!elem_find(&thread_all_list, &thread->all_list_tag));
+    list_append(&thread_all_list, &thread->all_list_tag);
+
     return thread;
+}
+
+static void make_main_thread(void) {
+    // main线程早已运行，以为其预留来地址0xc009e000
+    main_thread = running_thread();
+    init_thread(main_thread, "main", 31);
+    ASSERT(!elem_find(&thread_all_list, &main_thread->all_list_tag));
+    list_append(&thread_all_list, &main_thread->all_list_tag);
+}
+
+// 实现任务调度
+void schedule() {
+    ASSERT(intr_get_status() == INTR_OFF);
+
+    struct task_struct *cur = running_thread();
+    if (cur->status == TASK_RUNNING) { //若此线程只是CPU时间片到了
+        ASSERT(!elem_find(&thread_ready_list, &cur->general_tag));
+        list_append(&thread_ready_list, &cur->general_tag);
+        cur->ticks = cur->priority;
+        cur->status = TASK_READY;
+    } else {
+
+    }
+
+    ASSERT(!list_empty(&thread_ready_list));
+    thread_tag = NULL;
+    thread_tag = list_pop(&thread_ready_list);
+    struct task_struct *next = elem2entry(struct task_struct, general_tag, thread_tag);
+    next->status = TASK_RUNNING;
+    switch_to(cur, next);
+}
+
+void thread_init(void) {
+    put_str("thread_init start\n");
+    list_init(&thread_ready_list);
+    list_init(&thread_all_list);
+    /* 将当前main函数创建为线程 */
+    make_main_thread();
+    put_str("thread_init done\n");
 }
