@@ -4,6 +4,8 @@
 #include "timer.h"
 #include "memory.h"
 #include "thread.h"
+#include "console.h"
+#include "keyboard.h"
 
 // 负责所有模块的初始化
 void init_all() {
@@ -12,4 +14,6 @@ void init_all() {
     mem_init(); // 内存管理系统初始化
     thread_init(); // 初始化线程相关结构
     timer_init(); //初始化PIT
+    console_init(); //控制台初始化
+    keyboard_init();  // 键盘初始化
 }
