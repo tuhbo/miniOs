@@ -21,15 +21,8 @@ struct virtual_addr {
     uint32_t vaddr_start;   // 虚拟地址起始地址
 };
 
-struct pool {
-    struct bitmap pool_bitmap;
-    uint32_t phy_addr_start; //管理的物理内存的起始地址
-    uint32_t pool_size; // 内存池的容量
-};
 
-struct pool kernel_pool, user_pool;
-struct virtual_addr kernel_vaddr; // 内核虚拟地址池
-
+extern struct pool kernel_pool, user_pool;
 
 void mem_init(void);
 void *get_kernel_pages(uint32_t pg_cnt);
@@ -37,5 +30,8 @@ void *malloc_page(enum pool_flags pf, uint32_t pg_cnt);
 void malloc_init(void);
 uint32_t *pte_ptr(uint32_t vaddr);
 uint32_t *pde_ptr(uint32_t vaddr);
+uint32_t addr_v2p(uint32_t vaddr);
+void* get_a_page(enum pool_flags pf, uint32_t vaddr);
+void* get_user_pages(uint32_t pg_cnt);
 
 #endif // !__KERNEL_MEMPRY_H
