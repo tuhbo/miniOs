@@ -54,7 +54,7 @@ int bitmap_scan(struct bitmap *btmp, uint32_t cnt) {
     return bit_idx_start;
 }
 
-void bitmap_set(struct bitmap *btmp, uint32_t bit_idx, uint8_t value) {
+void bitmap_set(struct bitmap *btmp, uint32_t bit_idx, int8_t value) {
     ASSERT((value == 0) || (value == 1));
     uint32_t byte_idx = bit_idx / 8;
     uint32_t bit_odd = bit_idx % 8;
