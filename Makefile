@@ -23,7 +23,8 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
       $(BUILD_DIR)/switch.o $(BUILD_DIR)/console.o $(BUILD_DIR)/sync.o \
       $(BUILD_DIR)/keyboard.o $(BUILD_DIR)/ioqueue.o $(BUILD_DIR)/tss.o \
       $(BUILD_DIR)/process.o $(BUILD_DIR)/syscall.o $(BUILD_DIR)/syscall-init.o \
-	  $(BUILD_DIR)/stdio.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/stdio-kernel.o $(BUILD_DIR)/fs.o
+	  $(BUILD_DIR)/stdio.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/stdio-kernel.o $(BUILD_DIR)/fs.o \
+	  $(BUILD_DIR)/inode.o $(BUILD_DIR)/file.o $(BUILD_DIR)/dir.o
 
 ##### c代码编译  ##########
 $(BUILD_DIR)/main.o: kernel/main.c
@@ -90,6 +91,15 @@ $(BUILD_DIR)/stdio-kernel.o: lib/kernel/stdio-kernel.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILD_DIR)/fs.o: fs/fs.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/inode.o: fs/inode.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/file.o: fs/file.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/dir.o: fs/dir.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 ##### 汇编代码编译 ######
