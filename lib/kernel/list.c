@@ -1,6 +1,5 @@
 #include "list.h"
 #include "interrupt.h"
-#include "thread.h"
 
 /* 初始化双向链表list */
 void list_init (struct list* list) {
