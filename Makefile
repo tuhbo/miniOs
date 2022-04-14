@@ -8,7 +8,7 @@ MBR = $(BUILD_DIR)/mbr.bin
 LOADER = $(BUILD_DIR)/loader.bin
 KERNEL = $(BUILD_DIR)/kernel.bin
 
-LIB = -I boot/include/ -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -I fs/
+LIB = -I boot/include/ -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -I fs/ -I shell/
 
 CFLAGS = -Wall $(LIB) -c -fno-builtin -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes
 
@@ -24,7 +24,8 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
       $(BUILD_DIR)/keyboard.o $(BUILD_DIR)/ioqueue.o $(BUILD_DIR)/tss.o \
       $(BUILD_DIR)/process.o $(BUILD_DIR)/syscall.o $(BUILD_DIR)/syscall-init.o \
 	  $(BUILD_DIR)/stdio.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/stdio-kernel.o $(BUILD_DIR)/fs.o \
-	  $(BUILD_DIR)/inode.o $(BUILD_DIR)/file.o $(BUILD_DIR)/dir.o $(BUILD_DIR)/fork.o
+	  $(BUILD_DIR)/inode.o $(BUILD_DIR)/file.o $(BUILD_DIR)/dir.o $(BUILD_DIR)/fork.o \
+	  $(BUILD_DIR)/shell.o $(BUILD_DIR)/assert.o
 
 ##### c代码编译  ##########
 $(BUILD_DIR)/main.o: kernel/main.c
@@ -103,6 +104,12 @@ $(BUILD_DIR)/dir.o: fs/dir.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILD_DIR)/fork.o: userprog/fork.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/shell.o: shell/shell.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/assert.o: lib/user/assert.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 ##### 汇编代码编译 ######
