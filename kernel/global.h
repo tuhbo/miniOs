@@ -5,8 +5,8 @@
 
 // ----------------  GDT描述符属性  ----------------
 
-#define DESC_G_4K    1
-#define DESC_D_32    1
+#define	DESC_G_4K    1
+#define	DESC_D_32    1
 #define DESC_L	     0	// 64位代码标记，此处标记为0便可。
 #define DESC_AVL     0	// cpu不用此位，暂置为0  
 #define DESC_P	     1
@@ -26,7 +26,7 @@
 #define DESC_TYPE_TSS   9	// B位为0,不忙
 
 
-#define  RPL0  0
+#define	 RPL0  0
 #define	 RPL1  1
 #define	 RPL2  2
 #define	 RPL3  3
@@ -55,15 +55,6 @@
 #define TSS_ATTR_LOW ((DESC_P << 7) + (DESC_DPL_0 << 5) + (DESC_S_SYS << 4) + DESC_TYPE_TSS)
 #define SELECTOR_TSS ((4 << 3) + (TI_GDT << 2 ) + RPL0)
 
-struct gdt_desc {
-    uint16_t limit_low_word;
-    uint16_t base_low_word;
-    uint8_t  base_mid_byte;
-    uint8_t  attr_low_byte;
-    uint8_t  limit_high_attr_high;
-    uint8_t  base_high_byte;
-};
-
 
 //--------------   IDT描述符属性  ------------
 #define	 IDT_DESC_P	 1 
@@ -73,6 +64,17 @@ struct gdt_desc {
 #define	 IDT_DESC_16_TYPE     0x6   // 16位的门，不用，定义它只为和32位门区分
 #define	 IDT_DESC_ATTR_DPL0  ((IDT_DESC_P << 7) + (IDT_DESC_DPL0 << 5) + IDT_DESC_32_TYPE)
 #define	 IDT_DESC_ATTR_DPL3  ((IDT_DESC_P << 7) + (IDT_DESC_DPL3 << 5) + IDT_DESC_32_TYPE)
+
+
+struct gdt_desc {
+	uint16_t limit_low_word;
+	uint16_t base_low_word;
+	uint8_t  base_mid_byte;
+	uint8_t  attr_low_byte;
+	uint8_t  limit_high_attr_high;
+	uint8_t  base_high_byte;
+}; 
+
 
 //---------------    eflags属性    ---------------- 
 
@@ -114,12 +116,11 @@ struct gdt_desc {
 #define EFLAGS_IOPL_3	(3 << 12)	// IOPL3,用于测试用户程序在非系统调用下进行IO
 #define EFLAGS_IOPL_0	(0 << 12)	// IOPL0
 
-#define NULL ((void *)0)
+#define NULL ((void*)0)
+#define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / (STEP))
 #define bool int
 #define true 1
 #define false 0
-#define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / (STEP))
-
 
 #define PG_SIZE 4096
 

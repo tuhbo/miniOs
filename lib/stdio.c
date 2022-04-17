@@ -52,7 +52,7 @@ uint32_t vsprintf(char* str, const char* format, va_list ap) {
 
 			case 'd':
 				arg_int = va_arg(ap, int);
-			/* 若是负数, 将其转为正数后,再正数前面输出个负号'-'. */
+				/* 若是负数, 将其转为正数后,再正数前面输出个负号'-'. */
 				if (arg_int < 0) {
 					arg_int = 0 - arg_int;
 					*buf_ptr++ = '-';

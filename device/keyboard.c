@@ -135,8 +135,8 @@ static void intr_keyboard_handler(void) {
 	
 	if (break_code) {   // 若是断码break_code(按键弹起时产生的扫描码)
 
-	/* 由于ctrl_r 和alt_r的make_code和break_code都是两字节,
-	所以可用下面的方法取make_code,多字节的扫描码暂不处理 */
+		/* 由于ctrl_r 和alt_r的make_code和break_code都是两字节,
+		所以可用下面的方法取make_code,多字节的扫描码暂不处理 */
 		uint16_t make_code = (scancode &= 0xff7f);   // 得到其make_code(按键按下时产生的扫描码)
 
 	/* 若是任意以下三个键弹起了,将状态置为false */

@@ -25,7 +25,8 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o \
       $(BUILD_DIR)/process.o $(BUILD_DIR)/syscall.o $(BUILD_DIR)/syscall-init.o \
 	  $(BUILD_DIR)/stdio.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/stdio-kernel.o $(BUILD_DIR)/fs.o \
 	  $(BUILD_DIR)/inode.o $(BUILD_DIR)/file.o $(BUILD_DIR)/dir.o $(BUILD_DIR)/fork.o \
-	  $(BUILD_DIR)/shell.o $(BUILD_DIR)/assert.o $(BUILD_DIR)/buildin_cmd.o
+	  $(BUILD_DIR)/shell.o $(BUILD_DIR)/assert.o $(BUILD_DIR)/buildin_cmd.o \
+	  $(BUILD_DIR)/exec.o $(BUILD_DIR)/wait_exit.o $(BUILD_DIR)/pipe.o
 
 ##### c代码编译  ##########
 $(BUILD_DIR)/main.o: kernel/main.c
@@ -114,6 +115,16 @@ $(BUILD_DIR)/assert.o: lib/user/assert.c
 
 $(BUILD_DIR)/buildin_cmd.o: shell/buildin_cmd.c
 	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/exec.o: userprog/exec.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/wait_exit.o: userprog/wait_exit.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD_DIR)/pipe.o: shell/pipe.c
+	$(CC) $(CFLAGS) $^ -o $@
+
 ##### 汇编代码编译 ######
 $(MBR) : boot/mbr.S
 	$(AS) $(LIB) -o $@ $^
